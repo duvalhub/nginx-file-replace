@@ -24,6 +24,19 @@ func TestInsertInMap(t *testing.T) {
 				s:     []string{"a"},
 				value: "allo",
 				dest: map[string]interface{}{
+					"a": "toto",
+				},
+			},
+			want: map[string]interface{}{
+				"a":   "toto",
+			},
+		},
+		{
+			name: "allo",
+			args: args{
+				s:     []string{"a"},
+				value: "allo",
+				dest: map[string]interface{}{
 					"asd": "qwe",
 				},
 			},
@@ -156,7 +169,7 @@ func TestInsertInMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := insertInMap(tt.args.s, tt.args.value, tt.args.dest)
+			got := insertInMapRecursion(tt.args.s, tt.args.value, tt.args.dest)
 			if !reflect.DeepEqual(tt.want, got) {
 				t.Errorf("insertInMap() = %v, want %v", got, tt.want)
 			}

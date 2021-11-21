@@ -98,37 +98,17 @@ func insertInMap(s []string, value interface{}, dest map[string]interface{}) map
 }
 func insertInMapRecursion(s []string, value interface{}, dest map[string]interface{}) map[string]interface{} {
 	key := s[0]
-
-	switch dest[key].(type) {
-	case nil:
-		if len(s) == 1 {
-			dest[key] = value
-			return dest
-		} else {
-			dest[key] = map[string]interface{}{}
-			return insertInMap(s[1:], value, dest[key].(map[string]interface{}))
+	if len(s) > 1 {
+		switch dest[key].(type) {
+		case nil:
+			dest[key] = insertInMap(s[1:], value, map[string]interface{}{})
+		case map[string]interface{}:
+			dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
 		}
-	case map[string]interface{}:
-		dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
-		return dest
-	default:
-		return dest
+	} else if len(s) == 1 {
+		if dest[key] == nil {
+			dest[key] = value
+		}
 	}
-
-	// if dest[key] != nil {
-	// 	switch dest[key].(type) {
-	// 	case map[string]interface{}:
-	// 		dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
-	// 		return dest
-	// 	default:
-	// 		return dest
-	// 	}
-	// }
-	// if len(s) == 1 {
-	// 	dest[key] = value
-	// } else {
-	// 	dest[key] = insertInMap(s[1:], value, map[string]interface{}{})
-	// }
-
-	// return dest
+	return dest
 }
