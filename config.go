@@ -69,38 +69,66 @@ func (configs Configs) Load() (cloudconfigclient.Source, error) {
 
 func Work(s cloudconfigclient.Source) map[string]interface{} {
 	result := map[string]interface{}{}
-	// data := make(map[string]interface{})
 	for _, propertySource := range s.PropertySources {
 		for key, value := range propertySource.Source {
 			entries := strings.Split(key, ".")
 			result = insertInMap(entries, value, result)
-			// for _, entry := range entries {
-			// 	if data[entry] != nil {
-			// 		fmt.Println(entry)
-			// 	}
-			// }
-
 		}
 	}
 	return result
 }
-
 func insertInMap(s []string, value interface{}, dest map[string]interface{}) map[string]interface{} {
-	key := s[0]
-	if dest[key] != nil {
-		switch dest[key].(type) {
+	keys := s[:len(s)-1]
+	last := s[len(s)-1]
+
+	curr := dest
+	for _, key := range keys {
+		switch curr[key].(type) {
+		case nil:
+			curr[key] = map[string]interface{}{}
+			curr = curr[key].(map[string]interface{})
 		case map[string]interface{}:
-			dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
-			return dest
-		default:
-			return dest
+			curr = curr[key].(map[string]interface{})
 		}
 	}
-	if len(s) == 1 {
-		dest[key] = value
-	} else {
-		dest[key] = insertInMap(s[1:], value, map[string]interface{}{})
+	if curr[last] == nil {
+		curr[last] = value
+	}
+	return dest
+}
+func insertInMapRecursion(s []string, value interface{}, dest map[string]interface{}) map[string]interface{} {
+	key := s[0]
+
+	switch dest[key].(type) {
+	case nil:
+		if len(s) == 1 {
+			dest[key] = value
+			return dest
+		} else {
+			dest[key] = map[string]interface{}{}
+			return insertInMap(s[1:], value, dest[key].(map[string]interface{}))
+		}
+	case map[string]interface{}:
+		dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
+		return dest
+	default:
+		return dest
 	}
 
-	return dest
+	// if dest[key] != nil {
+	// 	switch dest[key].(type) {
+	// 	case map[string]interface{}:
+	// 		dest[key] = insertInMap(s[1:], value, dest[key].(map[string]interface{}))
+	// 		return dest
+	// 	default:
+	// 		return dest
+	// 	}
+	// }
+	// if len(s) == 1 {
+	// 	dest[key] = value
+	// } else {
+	// 	dest[key] = insertInMap(s[1:], value, map[string]interface{}{})
+	// }
+
+	// return dest
 }

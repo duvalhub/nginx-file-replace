@@ -102,49 +102,53 @@ func TestInsertInMap(t *testing.T) {
 		{
 			name: "c.b. asdasa",
 			args: args{
-				s:     []string{"qwe", "b", "c"},
-				value: "bye",
+				s:     []string{"files", "fileb", "size"},
+				value: "20",
 				dest: map[string]interface{}{
-					"a": map[string]interface{}{
-						"baa": map[string]interface{}{
-							"ds": "alqwlo",
-							"asdsad": "qwewqe",
+					"app": map[string]interface{}{
+						"source": map[string]interface{}{
+							"git":     "github.com",
+							"version": "1.2.3",
 						},
-						"b": map[string]interface{}{
-							"d": "allo",
+						"attributes": map[string]interface{}{
+							"name": "myapp",
 						},
 					},
-					"qwe": map[string]interface{}{
-						"baa": map[string]interface{}{
-							"ds": "alqwlo",
-							"asdsad": "qwewqe",
+					"files": map[string]interface{}{
+						"filea": map[string]interface{}{
+							"name": "filea",
+							"size": "12",
 						},
-						"baaas": map[string]interface{}{
-							"dasas": "asallo",
+						"fileb": map[string]interface{}{
+							"name": "fileb",
 						},
-						"b": map[string]interface{}{
-							"c": "bye",
+						"filec": map[string]interface{}{
+							"name": "filec",
 						},
 					},
 				},
 			},
 			want: map[string]interface{}{
-				"a": map[string]interface{}{
-					"baa": map[string]interface{}{
-						"ds": "alqwlo",
-						"asdsad": "qwewqe",
+				"app": map[string]interface{}{
+					"source": map[string]interface{}{
+						"git":     "github.com",
+						"version": "1.2.3",
 					},
-					"b": map[string]interface{}{
-						"d": "allo",
+					"attributes": map[string]interface{}{
+						"name": "myapp",
 					},
 				},
-				"qwe": map[string]interface{}{
-					"baa": map[string]interface{}{
-						"ds": "alqwlo",
-						"asdsad": "qwewqe",
+				"files": map[string]interface{}{
+					"filea": map[string]interface{}{
+						"name": "filea",
+						"size": "12",
 					},
-					"baaas": map[string]interface{}{
-						"dasas": "asallo",
+					"fileb": map[string]interface{}{
+						"name": "fileb",
+						"size": "20",
+					},
+					"filec": map[string]interface{}{
+						"name": "filec",
 					},
 				},
 			},
