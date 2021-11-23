@@ -14,6 +14,15 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	// Change Static Files
+	changeFiles(config)
+
+	// Generate Nginx Conf
+	generateNginxconf(config)
+}
+
+func changeFiles(config cloudconfigclient.Source) {
 	filesToChange, err := filesToChange(config)
 	if err != nil {
 		fmt.Println(err)
@@ -25,4 +34,15 @@ func main() {
 	}
 
 	log.Print("Done. Files processed.")
+}
+
+func generateNginxconf(config cloudconfigclient.Source) {
+	nginxConfigWriter, err := newNginxConfigWriterFromConfig(config)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	nginxConfigWriter.Write()
+
 }

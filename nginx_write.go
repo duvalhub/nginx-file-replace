@@ -2,9 +2,12 @@ package main
 
 import (
 	"html/template"
-	"io"
 	"log"
 	"os"
+	"path"
+
+	"github.com/duvalhub/cloudconfigclient"
+	"github.com/mitchellh/mapstructure"
 )
 
 type Proxy struct {
@@ -12,17 +15,25 @@ type Proxy struct {
 	Port int
 	Path string
 }
+
 type NginxConfigWriter struct {
-	Proxies []Proxy
+	Proxies  []Proxy
+	output   string
+	template string
 }
 
-func (n *NginxConfigWriter) Write(writer io.Writer) {
-	file, err := os.Open("nginx.tmpl")
+func (n *NginxConfigWriter) Write() {
+	writer, err := os.Create(n.output)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.Open(n.template)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	tmpl, err := template.New(file.Name()).ParseFiles(file.Name())
+	tmpl, err := template.New(path.Base(n.template)).ParseFiles(n.template)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,4 +41,11 @@ func (n *NginxConfigWriter) Write(writer io.Writer) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func newNginxConfigWriterFromConfig(source cloudconfigclient.Source) (NginxConfigWriter, error) {
+	nginxConfigWriter := NginxConfigWriter{}
+	json := source.Data["proxies"]
+	mapstructure.Decode(json, &nginxConfigWriter)
+	return nginxConfigWriter, nil
 }

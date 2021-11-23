@@ -3,13 +3,20 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"testing"
 )
 
 func TestNginxWrite(t *testing.T) {
+	tmpOutputFile, err := os.CreateTemp("", "asd")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.Remove(tmpOutputFile.Name())
+
+	mockTemplate := "testdata/nginx_write_template.tmpl"
+
 	tests := []struct {
 		name     string
 		expected string
@@ -20,6 +27,8 @@ func TestNginxWrite(t *testing.T) {
 			"nginx_write_noproxy.txt",
 			NginxConfigWriter{
 				make([]Proxy, 0),
+				tmpOutputFile.Name(),
+				mockTemplate,
 			},
 		},
 		{
@@ -38,25 +47,21 @@ func TestNginxWrite(t *testing.T) {
 						"bana",
 					},
 				},
+				tmpOutputFile.Name(),
+				mockTemplate,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpFile, err := ioutil.TempFile("", "test-write")
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer os.Remove(tmpFile.Name())
-
-			tt.request.Write(tmpFile)
+			tt.request.Write()
 
 			expected, err := os.ReadFile(fmt.Sprintf("testdata/%s", tt.expected))
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			output, err := os.ReadFile(tmpFile.Name())
+			output, err := os.ReadFile(tt.request.output)
 			if err != nil {
 				log.Fatal(err)
 			}
