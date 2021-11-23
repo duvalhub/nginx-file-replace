@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -15,7 +14,7 @@ func TestNginxWrite(t *testing.T) {
 	}
 	defer os.Remove(tmpOutputFile.Name())
 
-	mockTemplate := "testdata/nginx_write_template.tmpl"
+	mockTemplate := "nginx.tmpl"
 
 	tests := []struct {
 		name     string
@@ -56,7 +55,7 @@ func TestNginxWrite(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.request.Write()
 
-			expected, err := os.ReadFile(fmt.Sprintf("testdata/%s", tt.expected))
+			expected, err := os.ReadFile(tt.expected)
 			if err != nil {
 				log.Fatal(err)
 			}
