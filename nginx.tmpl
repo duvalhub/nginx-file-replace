@@ -1,0 +1,19 @@
+server {
+    server_name localhost;
+    listen 80;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    location /index.html {
+        add_header Cache-Control no-cache;
+    }
+    {{range $proxy := .Proxies}}
+    location /api/{{$proxy.Path}} {
+        set $upstream {{$proxy.Url}}:{{$proxy.Port}};
+        proxy_pass http://$upstream;
+    }
+    {{end}}
+}
