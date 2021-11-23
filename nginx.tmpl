@@ -13,7 +13,7 @@ server {
     {{ $length := len .Proxies }} {{ if gt $length 0 }} {{range $key, $proxy := .Proxies}} 
     location /api/{{$proxy.Path}} {
         set $upstream_{{$key}} {{$proxy.Url}}:{{$proxy.Port}};
-        proxy_pass http://$upstream_{{$key}};
+        proxy_pass $upstream_{{$key}};
     }
     {{end}}{{end}} 
 }
