@@ -17,23 +17,23 @@ type Proxy struct {
 }
 
 type NginxConfigWriter struct {
-	Proxies  []Proxy
-	output   string
-	template string
+	Proxies  map[string]Proxy
+	Output   string
+	Template string
 }
 
 func (n *NginxConfigWriter) Write() {
-	writer, err := os.Create(n.output)
+	writer, err := os.Create(n.Output)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Couldn't open configuration file '%s'. Error: %s", n.Output, err)
 	}
 
-	file, err := os.Open(n.template)
+	file, err := os.Open(n.Template)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	tmpl, err := template.New(path.Base(n.template)).ParseFiles(n.template)
+	tmpl, err := template.New(path.Base(n.Template)).ParseFiles(n.Template)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,8 +44,8 @@ func (n *NginxConfigWriter) Write() {
 }
 
 func newNginxConfigWriterFromConfig(source cloudconfigclient.Source) (NginxConfigWriter, error) {
-	nginxConfigWriter := NginxConfigWriter{}
-	json := source.Data["proxies"]
+	nginxConfigWriter := &NginxConfigWriter{}
+	json := source.Data["nginx"]
 	mapstructure.Decode(json, &nginxConfigWriter)
-	return nginxConfigWriter, nil
+	return *nginxConfigWriter, nil
 }

@@ -10,10 +10,10 @@ server {
     location /index.html {
         add_header Cache-Control no-cache;
     }
-    {{range $proxy := .Proxies}}
+    {{ $length := len .Proxies }} {{ if gt $length 0 }} {{range $key, $proxy := .Proxies}} 
     location /api/{{$proxy.Path}} {
-        set $upstream {{$proxy.Url}}:{{$proxy.Port}};
-        proxy_pass http://$upstream;
+        set $upstream_{{$key}} {{$proxy.Url}}:{{$proxy.Port}};
+        proxy_pass http://$upstream_{{$key}};
     }
-    {{end}}
+    {{end}}{{end}} 
 }

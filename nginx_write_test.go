@@ -26,7 +26,7 @@ func TestNginxWrite(t *testing.T) {
 			"allo",
 			"nginx_write_noproxy.txt",
 			NginxConfigWriter{
-				make([]Proxy, 0),
+				map[string]Proxy{},
 				tmpOutputFile.Name(),
 				mockTemplate,
 			},
@@ -35,13 +35,13 @@ func TestNginxWrite(t *testing.T) {
 			"allo",
 			"nginx_write_proxies.txt",
 			NginxConfigWriter{
-				[]Proxy{
-					{
+				map[string]Proxy{
+					"aa": {
 						"toto.com",
 						8080,
 						"toto",
 					},
-					{
+					"bb": {
 						"banaa.com",
 						80,
 						"bana",
@@ -61,7 +61,7 @@ func TestNginxWrite(t *testing.T) {
 				log.Fatal(err)
 			}
 
-			output, err := os.ReadFile(tt.request.output)
+			output, err := os.ReadFile(tt.request.Output)
 			if err != nil {
 				log.Fatal(err)
 			}
