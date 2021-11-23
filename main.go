@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/duvalhub/cloudconfigclient"
@@ -11,8 +10,7 @@ func main() {
 	configsEnv := cloudconfigclient.ConfigsEnv{}
 	config, err := configsEnv.ReadFromEnv().Load()
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 
 	// Change Static Files
@@ -25,8 +23,7 @@ func main() {
 func changeFiles(config cloudconfigclient.Source) {
 	filesToChange, err := filesToChange(config)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 
 	for _, file := range filesToChange {
@@ -39,8 +36,7 @@ func changeFiles(config cloudconfigclient.Source) {
 func generateNginxconf(config cloudconfigclient.Source) {
 	nginxConfigWriter, err := newNginxConfigWriterFromConfig(config)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 
 	nginxConfigWriter.Write()
