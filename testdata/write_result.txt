@@ -1,0 +1,10 @@
+server {
+    server_name toto.com;
+    listen 80;
+    resolver 127.0.0.11 valid=30s;
+    access_log /var/log/nginx/access.log vhost;
+    location / {
+        set $upstream localhost:8080;
+        proxy_pass http://$upstream;
+    }
+}

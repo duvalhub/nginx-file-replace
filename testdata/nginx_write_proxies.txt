@@ -1,0 +1,24 @@
+server {
+    server_name localhost;
+    listen 80;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    location /index.html {
+        add_header Cache-Control no-cache;
+    }
+       
+    location /api/toto {
+        set $upstream_aa toto.com:8080;
+        proxy_pass http://$upstream_aa;
+    }
+     
+    location /api/bana {
+        set $upstream_bb banaa.com:80;
+        proxy_pass http://$upstream_bb;
+    }
+     
+}
