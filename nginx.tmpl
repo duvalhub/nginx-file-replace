@@ -12,9 +12,15 @@ server {
         add_header Cache-Control no-cache;
     }
     {{ $length := len .Proxies }} {{ if gt $length 0 }} {{range $key, $proxy := .Proxies}} 
-    location /api/{{$proxy.Path}} {
+    location ~ ^/api/{{$proxy.Path}}/(.*)$ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_htt_version 1.1;
         set $upstream_{{$key}} {{$proxy.Url}}:{{$proxy.Port}};
-        proxy_pass $upstream_{{$key}};
+        proxy_pass $upstream_{{$key}}/$1$is_args$args;
     }
     {{end}}{{end}} 
 }
